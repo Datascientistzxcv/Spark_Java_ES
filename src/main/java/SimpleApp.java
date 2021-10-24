@@ -34,7 +34,7 @@ public class SimpleApp {
             SparkSession spark = null;
             sparkConf.setMaster("local[*]");
             sparkConf.set("spark.cleaner.ttl", "3600");
-            sparkConf.set("es.nodes", "elk.adastake.info");
+            sparkConf.set("es.nodes", System.getenv(("HOST")));
             sparkConf.set("es.port", "9201");
             sparkConf.set("es.nodes.discovery", "false");
             sparkConf.set("es.nodes.wan.only", "true");
@@ -71,7 +71,7 @@ public class SimpleApp {
         SparkSession spark = null;
         sparkConf.setMaster("local[*]");
         sparkConf.set("spark.cleaner.ttl", "3600");
-        sparkConf.set("es.nodes", "elk.adastake.info");
+        sparkConf.set("es.nodes", System.getenv(("HOST")));
         sparkConf.set("es.port", "9201");
         sparkConf.set("es.nodes.discovery", "false");
         sparkConf.set("es.nodes.wan.only", "true");
@@ -98,7 +98,7 @@ public class SimpleApp {
         SparkSession spark = null;
         sparkConf.setMaster("local[*]");
         sparkConf.set("spark.cleaner.ttl", "3600");
-        sparkConf.set("es.nodes", "elk.adastake.info");
+        sparkConf.set("es.nodes", System.getenv(("HOST")));
         sparkConf.set("es.port", "9201");
         sparkConf.set("es.nodes.discovery", "false");
         sparkConf.set("es.nodes.wan.only", "true");
@@ -134,7 +134,7 @@ public class SimpleApp {
         SparkSession spark = null;
         sparkConf.setMaster("local[*]");
         sparkConf.set("spark.cleaner.ttl", "3600");
-        sparkConf.set("es.nodes", "elk.adastake.info");
+        sparkConf.set("es.nodes", System.getenv(("HOST")));
         sparkConf.set("es.port", "9201");
         sparkConf.set("es.nodes.discovery", "false");
         sparkConf.set("es.nodes.wan.only", "true");
@@ -159,7 +159,7 @@ public class SimpleApp {
         SparkSession spark = null;
         sparkConf.setMaster("local[*]");
         sparkConf.set("spark.cleaner.ttl", "3600");
-        sparkConf.set("es.nodes", "elk.adastake.info");
+        sparkConf.set("es.nodes", System.getenv(("HOST")));
         sparkConf.set("es.port", "9201");
         sparkConf.set("es.nodes.discovery", "false");
         sparkConf.set("es.nodes.wan.only", "true");
@@ -181,7 +181,7 @@ public class SimpleApp {
         String tblname=tablname;
         Dataset<Row> df_table=df;
         df_table.printSchema();
-        df_table.write()
+        df_table.write().mode("overwrite")
         .format("jdbc")
         .option("inferSchema","true")
         .option("url", "jdbc:postgresql://localhost:5432/elk")
