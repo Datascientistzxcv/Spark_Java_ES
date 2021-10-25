@@ -19,9 +19,9 @@ import static org.apache.spark.sql.functions.explode;
 import static org.apache.spark.sql.functions.element_at;
 
 // import org.apache.log4j.{Level, LogManager, PropertyConfigurator};
-public class SimpleApp {
+public class EsSpark {
     public static void main(String[] args) {
-        SimpleApp  ws= new SimpleApp();
+        EsSpark  ws= new EsSpark();
         ws.koelEvent();
         ws.kvbNextBike();
         ws.openWeather();
@@ -30,7 +30,7 @@ public class SimpleApp {
     }
         public static void koelEvent(){
             SparkConf sparkConf = new SparkConf(true);
-            sparkConf.setAppName(SimpleApp.class.getName());
+            sparkConf.setAppName(EsSpark.class.getName());
             SparkSession spark = null;
             sparkConf.setMaster("local[*]");
             sparkConf.set("spark.cleaner.ttl", "3600");
@@ -67,7 +67,7 @@ public class SimpleApp {
     public static void kvbNextBike()
     {
         SparkConf sparkConf = new SparkConf(true);
-        sparkConf.setAppName(SimpleApp.class.getName());
+        sparkConf.setAppName(EsSpark.class.getName());
         SparkSession spark = null;
         sparkConf.setMaster("local[*]");
         sparkConf.set("spark.cleaner.ttl", "3600");
@@ -94,7 +94,7 @@ public class SimpleApp {
     public static void openWeather()
     {
         SparkConf sparkConf = new SparkConf(true);
-        sparkConf.setAppName(SimpleApp.class.getName());
+        sparkConf.setAppName(EsSpark.class.getName());
         SparkSession spark = null;
         sparkConf.setMaster("local[*]");
         sparkConf.set("spark.cleaner.ttl", "3600");
@@ -130,7 +130,7 @@ public class SimpleApp {
     public static void poi()
     {
         SparkConf sparkConf = new SparkConf(true);
-        sparkConf.setAppName(SimpleApp.class.getName());
+        sparkConf.setAppName(EsSpark.class.getName());
         SparkSession spark = null;
         sparkConf.setMaster("local[*]");
         sparkConf.set("spark.cleaner.ttl", "3600");
@@ -145,7 +145,7 @@ public class SimpleApp {
         spark = SparkSession.builder().config(sparkConf).getOrCreate();
         SQLContext sqlContext = spark.sqlContext();
         Dataset<Row> df = JavaEsSparkSQL.esDF(sqlContext, "poi");
-        df.printSchema();
+        // df.printSchema();
         Dataset<Row> df1 = df.selectExpr("SID","NAME","ADRESSE",
         "cast(lat as Double) lat", 
         "cast(lon as Double) lon","STADTTEIL","STADTVIERTEL");
@@ -155,7 +155,7 @@ public class SimpleApp {
     public static void wunderfleet()
     {
         SparkConf sparkConf = new SparkConf(true);
-        sparkConf.setAppName(SimpleApp.class.getName());
+        sparkConf.setAppName(EsSpark.class.getName());
         SparkSession spark = null;
         sparkConf.setMaster("local[*]");
         sparkConf.set("spark.cleaner.ttl", "3600");
@@ -180,14 +180,13 @@ public class SimpleApp {
     public static void writeToPsql(Dataset<Row> df,String tablname){
         String tblname=tablname;
         Dataset<Row> df_table=df;
-        df_table.printSchema();
         df_table.write().mode("overwrite")
         .format("jdbc")
         .option("inferSchema","true")
-        .option("url", "jdbc:postgresql://localhost:5432/elk")
-        .option("dbtable", "es."+tblname)
-        .option("user", "shekhar")
-        .option("password", "shekhar")
+        .option("url", "jdbc:postgresql://"+System.getenv(("JDBC_HOST"))+":5432/"+System.getenv(("DATABASE")))
+        .option("dbtable", System.getenv(("SCHEMA"))+"."+tblname)
+        .option("user",System.getenv(("JDBC_USER")))
+        .option("password",System.getenv(("JDBC_PASSWORD")))
         .option("mode","overwrite")
         .save();
     }
